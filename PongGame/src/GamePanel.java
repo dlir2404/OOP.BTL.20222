@@ -48,21 +48,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void draw(Graphics g) {
-        long lastTime = System.nanoTime();
-        double amountOfTicks = 60.0;
-        double ns = 1000000000.0 / amountOfTicks;
-        double delta = 0;
-        while (true) {
-            long now = System.nanoTime();
-            delta += (now - lastTime)/ns;
-            lastTime = now;
-            if (delta >= 1) {
-                move();
-                checkCollison();
-                repaint();
-                delta--;
-            }
-        }
+    	paddle1.draw(g);
+    	paddle2.draw(g);
     }
 
     public void move() {
@@ -70,22 +57,50 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void checkCollison() {
-
+    	if (paddle1.y <= 0) {
+    		paddle1.y = 0;
+    	}
+    	if (paddle1.y >= (GAME_HEIGHT-PADDLE_HEIGHT)) {
+    		paddle1.y = GAME_HEIGHT-PADDLE_HEIGHT;
+    	}
+    	if (paddle2.y <= 0) {
+    		paddle2.y = 0;
+    	}
+    	if (paddle2.y >= (GAME_HEIGHT-PADDLE_HEIGHT)) {
+    		paddle2.y = GAME_HEIGHT-PADDLE_HEIGHT;
+    	}
     }
 
     @Override
     public void run() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'run'");
+    	 long lastTime = System.nanoTime();
+         double amountOfTicks = 60.0;	//60fps
+         double ns = 1000000000.0 / amountOfTicks;
+         double delta = 0;
+         while (true) {
+             long now = System.nanoTime();
+             delta += (now - lastTime)/ns;
+             lastTime = now;
+             if (delta >= 1) {
+                 move();
+                 checkCollison();
+                 repaint();
+                 delta--;
+         
+             }
+         }
     }
 
     public class AL extends KeyAdapter {
         public void keyPressed(KeyEvent e) {
-
+        	paddle1.keyPressed(e);
+        	paddle2.keyPressed(e);
         }
 
         public void keyReleased(KeyEvent e) {
-
+        	paddle1.keyReleased(e);
+        	paddle2.keyReleased(e);
         }
     }
 }
+
