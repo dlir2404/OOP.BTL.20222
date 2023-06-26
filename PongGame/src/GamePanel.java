@@ -32,8 +32,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void newBall() {
-        //random = new Random();
-        ball = new Ball((GAME_WIDTH/2)-(BALL_DIAMETER/2),(GAME_HEIGHT/2)-(BALL_DIAMETER/2),BALL_DIAMETER,BALL_DIAMETER);
+        random = new Random();
+        ball = new Ball((GAME_WIDTH/2)-(BALL_DIAMETER/2),random.nextInt(GAME_HEIGHT - BALL_DIAMETER),BALL_DIAMETER,BALL_DIAMETER);
     }
 
     public void newPaddle() {
@@ -51,15 +51,43 @@ public class GamePanel extends JPanel implements Runnable {
     public void draw(Graphics g) {
     	paddle1.draw(g);
     	paddle2.draw(g);
+    	ball.draw(g);
+    	score.draw(g);
     }
 
     public void move() {
         paddle1.move();
         paddle2.move();
-        //ball.move();
+        ball.move();
     }
 
     public void checkCollison() {
+    	//bounce ball off top & bottom window edges
+    	if (ball.y <= 0) {
+    		ball.setYDirection(-ball.yVelocity);
+    	}
+    	if (ball.y >= GAME_HEIGHT - BALL_DIAMETER) {
+    		ball.setYDirection(-ball.yVelocity);
+    	}
+    	//bounce ball off paddles
+    	if (ball.intersects(paddle1)) {
+    		ball.setXDirection(-ball.xVelocity);
+    		ball.xVelocity++;
+    		if (ball.yVelocity > 0) {
+    			ball.yVelocity++;
+    		} else
+    			ball.yVelocity--;
+    	}
+    	if (ball.intersects(paddle2)) {
+    		ball.setXDirection(-ball.xVelocity);
+    		ball.xVelocity--;
+    		if (ball.yVelocity > 0) {
+    			ball.yVelocity++;
+    		} else
+    			ball.yVelocity--;
+    	}
+    	
+    	//stop paddles at the window edges
     	if (paddle1.y <= 0) {
     		paddle1.y = 0;
     	}
@@ -71,6 +99,17 @@ public class GamePanel extends JPanel implements Runnable {
     	}
     	if (paddle2.y >= (GAME_HEIGHT-PADDLE_HEIGHT)) {
     		paddle2.y = GAME_HEIGHT-PADDLE_HEIGHT;
+    	}
+    	//give player 1 point and create new ball, paddles
+    	if (ball.x <= 0) {
+    		score.player2++;
+    		newPaddle();
+    		newBall();
+    	}
+    	if (ball.x >= GAME_WIDTH - BALL_DIAMETER) {
+    		score.player1++;
+    		newPaddle();
+    		newBall();
     	}
     }
 
