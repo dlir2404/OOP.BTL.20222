@@ -17,7 +17,7 @@ public class GamePanel extends JPanel implements Runnable {
     Paddle paddle1,paddle2;
     Ball ball;
     Score score;
-
+    JButton startButton;
 
     GamePanel() {
         newPaddle();
@@ -27,8 +27,20 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(new AL());
         this.setPreferredSize(SCREEN_SIZE);
 
-        gameThread = new Thread(this);
-        gameThread.start();
+        startButton = new JButton("Start");
+        startButton.setBackground(Color.white);
+        startButton.setFont(new Font("Consolas", Font.BOLD, 24));
+        startButton.setPreferredSize(new Dimension(150, 80));
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                startGame(); // Call the startGame() method when the button is clicked
+            }
+        });
+
+        this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, GAME_HEIGHT/2 - 50));
+        // Add the start button to the panel
+        this.add(startButton);
+
     }
 
     public void newBall() {
@@ -41,7 +53,8 @@ public class GamePanel extends JPanel implements Runnable {
         paddle2 = new Paddle((GAME_WIDTH - PADDLE_WIDTH), (GAME_HEIGHT/2)-(PADDLE_HEIGHT/2), PADDLE_WIDTH, PADDLE_HEIGHT, 2);
     }   
 
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
+    	super.paintComponent(g);
         image = createImage(getWidth(), getHeight());
         graphics = image.getGraphics();
         draw(graphics);
@@ -133,6 +146,11 @@ public class GamePanel extends JPanel implements Runnable {
          }
     }
 
+    private void startGame() {
+        gameThread = new Thread(this);
+        gameThread.start();
+        startButton.setVisible(false);
+    }
     public class AL extends KeyAdapter {
         public void keyPressed(KeyEvent e) {
         	paddle1.keyPressed(e);
@@ -145,4 +163,3 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 }
-
